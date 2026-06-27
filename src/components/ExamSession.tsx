@@ -101,7 +101,7 @@ function SessionContent({ examId, examDisplayName }: { examId: string; examDispl
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <button
-          onClick={() => goToPage(currentPage - 1)}
+          onClick={() => { goToPage(currentPage - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
           disabled={currentPage === 0}
           className="px-4 py-2 rounded-lg border border-white/10 text-gray-400 text-sm hover:border-white/30 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
@@ -129,7 +129,7 @@ function SessionContent({ examId, examDisplayName }: { examId: string; examDispl
           ) : (
             <motion.button
               whileTap={{ scale: 0.97 }}
-              onClick={() => isLastPage ? router.push(`/exam/${examId}/results`) : goToPage(currentPage + 1)}
+              onClick={() => { if (isLastPage) { router.push(`/exam/${examId}/results`) } else { goToPage(currentPage + 1); window.scrollTo({ top: 0, behavior: 'smooth' }) } }}
               className="px-6 py-2 rounded-lg bg-neon-cyan text-background font-semibold text-sm hover:bg-neon-cyan/90 transition-all hover:shadow-glow-cyan"
             >
               {isLastPage ? 'See Results →' : 'Next 10 Questions →'}
