@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CertExam Trainer
+
+A modern, animated certification exam practice web app built with Next.js 14.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Adding New Exams
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Drop a CSV file into `data/exams/`. The app auto-discovers all `.csv` files on next load.
 
-## Learn More
+**Simple format:**
+```
+Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer[,Explanation]
+```
 
-To learn more about Next.js, take a look at the following resources:
+**Extended format (enables category/skill filtering):**
+```
+Category,Skill,Question,OptionA,OptionB,OptionC,OptionD,CorrectAnswer[,Explanation]
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `CorrectAnswer`: `A`, `B`, `C`, or `D` (or the full option text — auto-mapped)
+- `Explanation`: optional; shown after the user submits
+- File name → exam title: `azure-fundamentals.csv` → **Azure Fundamentals**
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How Scoring Works
 
-## Deploy on Vercel
+- Each question is 1 point
+- **Pass threshold: 70%**
+- Retry incorrect answers on each page before moving to the next
+- Final results show total score, percentage, pass/fail, and per-category breakdown
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Running Tests
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm test
+```
+
+## Project Structure
+
+```
+data/exams/          ← drop CSV files here
+src/
+  app/               ← Next.js App Router pages
+  components/        ← UI components
+  context/           ← ExamSessionContext (answer state + sessionStorage)
+  lib/               ← csvParser, exams loader, scoring utilities
+  types/             ← TypeScript types
+```
