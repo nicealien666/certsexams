@@ -21,6 +21,7 @@ function SessionContent({ examId, examDisplayName }: { examId: string; examDispl
     setAnswer,
     submitPage,
     setPageMode,
+    retryPage,
     goToPage,
     resetSession,
     totalPages,
@@ -69,7 +70,7 @@ function SessionContent({ examId, examDisplayName }: { examId: string; examDispl
             total={pageScore.total}
             onRetry={
               pageScore.wrongQuestionIds.length > 0 && mode === 'reviewing'
-                ? () => setPageMode(currentPage, 'retrying')
+                ? () => retryPage(currentPage, pageScore.wrongQuestionIds)
                 : undefined
             }
           />

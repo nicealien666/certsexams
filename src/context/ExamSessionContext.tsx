@@ -9,6 +9,7 @@ interface ExamSessionContextValue extends ExamSessionState {
   setAnswer: (questionId: string, answer: AnswerLetter) => void
   submitPage: (pageIndex: number) => void
   setPageMode: (pageIndex: number, mode: PageMode) => void
+  retryPage: (pageIndex: number, wrongQuestionIds: string[]) => void
   goToPage: (pageIndex: number) => void
   resetSession: () => void
   totalPages: number
@@ -68,6 +69,14 @@ export function ExamSessionProvider({
     setState(prev => ({ ...prev, pageMode: { ...prev.pageMode, [pageIndex]: mode } }))
   }, [])
 
+  const retryPage = useCallback((pageIndex: number, wrongQuestionIds: string[]) => {
+    setState(prev => {
+      const newAnswers = { ...prev.answers }
+      for (const id of wrongQuestionIds) delete newAnswers[id]
+      return { ...prev, answers: newAnswers, pageMode: { ...prev.pageMode, [pageIndex]: 'retrying' } }
+    })
+  }, [])
+
   const goToPage = useCallback((pageIndex: number) => {
     setState(prev => ({ ...prev, currentPage: pageIndex }))
   }, [])
@@ -87,7 +96,7 @@ export function ExamSessionProvider({
   return (
     <ExamSessionContext.Provider value={{
       ...state,
-      setAnswer, submitPage, setPageMode, goToPage, resetSession,
+      setAnswer, submitPage, setPageMode, retryPage, goToPage, resetSession,
       totalPages, questionsPerPage: QUESTIONS_PER_PAGE, getPageQuestions,
     }}>
       {children}

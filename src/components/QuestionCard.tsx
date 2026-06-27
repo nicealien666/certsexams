@@ -22,7 +22,7 @@ function getOptionStyle(
   const base =
     'flex items-start gap-3 w-full rounded-lg border px-4 py-3 text-sm text-left transition-all duration-200'
 
-  if (mode === 'answering') {
+  if (mode === 'answering' || mode === 'retrying') {
     return selected === letter
       ? `${base} border-neon-cyan bg-neon-cyan/10 text-white shadow-glow-cyan-sm`
       : `${base} border-white/10 bg-white/5 text-gray-300 hover:border-neon-cyan/40 hover:bg-white/10 hover:text-white cursor-pointer`
@@ -34,16 +34,12 @@ function getOptionStyle(
   if (selected === letter) {
     return `${base} border-neon-red bg-neon-red/10 text-neon-red shadow-glow-red`
   }
-  if (mode === 'retrying') {
-    return `${base} border-white/10 bg-white/5 text-gray-300 hover:border-neon-cyan/40 hover:bg-white/10 hover:text-white cursor-pointer opacity-60`
-  }
   return `${base} border-white/5 bg-white/[0.02] text-gray-500 opacity-50`
 }
 
 export function QuestionCard({ question, index, selectedAnswer, mode, onSelect }: QuestionCardProps) {
   const isReviewing = mode === 'reviewing'
   const isRetrying = mode === 'retrying'
-  const wasWrong = selectedAnswer !== undefined && selectedAnswer !== question.correctAnswer
 
   return (
     <motion.div
@@ -70,16 +66,12 @@ export function QuestionCard({ question, index, selectedAnswer, mode, onSelect }
 
       <div className="space-y-2">
         {LETTERS.map(letter => {
-          const canClick =
-            mode === 'answering' ||
-            (isRetrying && letter !== question.correctAnswer && !(wasWrong && letter === selectedAnswer))
-
           return (
             <button
               key={letter}
               className={getOptionStyle(letter, question, selectedAnswer, mode)}
-              onClick={() => canClick && onSelect(letter)}
-              disabled={isReviewing || (isRetrying && !canClick)}
+              onClick={() => !isReviewing && onSelect(letter)}
+              disabled={isReviewing}
             >
               <span className="w-5 h-5 rounded-full border border-current flex-shrink-0 flex items-center justify-center text-xs font-bold mt-0.5">
                 {letter}
